@@ -1,0 +1,825 @@
+{
+  "name": "ai_generated_bulletin",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f14ea5ed-826b-4dcd-a48e-57cf59e27ad7",
+              "leftValue": "={{ $json.isoDate?.toDateTime().format('yyyy-MM-dd') }}",
+              "rightValue": "={{ $today.minus(1, 'days').format('yyyy-MM-dd') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        -600
+      ],
+      "id": "18a5a5bb-ec45-4d0e-8a12-196efbdc78ac",
+      "name": "Filter Yesterday News",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5242cc7f-817e-40ad-adcd-fc5a648404a9",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "fff7c2d5-98ba-400f-b428-fb18e6317042",
+              "name": "link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "0e32b617-cf5e-430e-84a9-9d06650ea404",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        140,
+        -840
+      ],
+      "id": "48d27828-8428-43f4-9bdd-e22b0202458d",
+      "name": "RSS Feed Keys"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "456621a0-ffc5-4a9a-a3fc-4c712e6e9798",
+              "name": "language",
+              "value": "en-US",
+              "type": "string"
+            },
+            {
+              "id": "6af89e0a-b628-42d8-96c5-68f8cf107e2d",
+              "name": "llm",
+              "value": "Google Gemini",
+              "type": "string"
+            },
+            {
+              "id": "cc0db401-6886-43a6-b0ce-2e5e2ea912a9",
+              "name": "model",
+              "value": "gemini-2.0-flash",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        -360
+      ],
+      "id": "8a60e476-c5ea-4d03-a932-93462f191643",
+      "name": "Variables"
+    },
+    {
+      "parameters": {
+        "url": "https://www.bleepingcomputer.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -840
+      ],
+      "id": "0b3a43b5-87bd-49df-a4c3-6c21f9b5202f",
+      "name": "Bleeping Computer RSS Feed"
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.feedburner.com/TheHackersNews",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -600
+      ],
+      "id": "d2a3391b-eb63-4256-ad09-7f127cf84050",
+      "name": "Threat Post RSS Feed"
+    },
+    {
+      "parameters": {
+        "url": "https://www.darkreading.com/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -540,
+        -360
+      ],
+      "id": "7f8a212f-547d-4648-8956-8cdd2d6ff936",
+      "name": "Dark Reading RSS Feed"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "news",
+        "include": "allFieldsExcept",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        140,
+        -600
+      ],
+      "id": "ce52ea00-81bb-4724-a43c-3c1c93883deb",
+      "name": "News Aggregation"
+    },
+    {
+      "parameters": {
+        "errorMessage": "An error occured"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -120
+      ],
+      "id": "85f0c6fe-07b4-4bcd-9455-e67ac5af0668",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -200,
+        -840
+      ],
+      "id": "64cef653-1811-48f7-a92e-463cc4ca4293",
+      "name": "Merge RSS Feeds",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5c7ed22a-2659-48fb-852b-48c3ed4022ed",
+              "leftValue": "={{ $json.link }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "be1969ce-4977-4743-a308-c97aef5c0993",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "0e9ec737-ac9c-4f08-8fc1-c77f8d5b699c",
+              "leftValue": "={{ $json.content }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -200,
+        -360
+      ],
+      "id": "78092273-0201-4b22-b5b5-1c41af18bc23",
+      "name": "Has any empty field?",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Below is a collection of recent cybersecurity news:  \n\n{{ JSON.stringify ($jmespath($json.news, '[].{title: title, content: content, link: link}')) }}\n\n---\n\n# Instructions:\n\n1.  **Summarize News:** Process the provided collection of cybersecurity news articles and create concise yet informative summaries.\n\n2.  **Group by Category:** Organize the summaries under common and relevant sections (e.g., Ransomware, APTs, Data Breaches, Vulnerabilities).\n\n3.  **Conciseness and Emojis:** Keep the summaries brief and easy to understand. You can enhance readability by adding relevant emojis.\n\n4.  **Section Hashtags:** For each summarized news item, identify relevant hashtags based on the tags of the original news article(s) it summarizes (e.g., `#policy #vulnerability #exploit`). Include these hashtags at the end of the summarized text for that item.\n\n5.  **Inline Source Links:** Each news topic must include an inline reference link using the format `[🔗¹](link)`.\n\n6.  **Markdown Format:** Ensure the entire output is formatted using Markdown for easy readability.\n\n7.  **Content Only:** Generate *only* the categorized news summaries. Do not include any overall bulletin titles, introductions, or concluding remarks.\n\n---\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a cybersecurity analyst and professional writer. Your task is to create a structured, informative, and professional **TL;DR cybersecurity briefing** based on the latest news.\n\nFormat the briefing in **Markdown**, ensuring each key topic is clear, concise, and well-structured.  \nFor each summarized news item, identify relevant tags from the original article(s) and include them as hashtags at the end of the summary.\nWhen summarizing information, include an inline link to each source using the format `[(🔗Number)](link)`.\nThe tone should be **authoritative, professional, and engaging** for an audience of cybersecurity professionals.\n\n**DO NOT** enclose the Markdown output within any code blocks (like ```markdown``` or ``)!\n\n---\n\n**Output Example:** \n\n### 🛠️ Tools & Techniques\n\n- **Chirp: Audio-Based Data Transfer Tool:** A new open-source tool called 'Chirp' allows data transfer between devices using audio tones, potentially enabling covert communication or data exfiltration. [(🔗¹)](https://www.bleepingcomputer.com/news/software/new-chirp-tool-uses-audio-tones-to-transfer-data-between-devices/) #exploit \n\n### 👤 Insider Threats\n\n- **Developer Guilty of Sabotaging Employer's Systems:** A software developer was found guilty of using a \"kill switch\" and other custom malware to sabotage his former employer's systems after being demoted. [(🔗¹)](https://www.bleepingcomputer.com/news/security/developer-guilty-of-using-kill-switch-to-sabotage-employers-systems/) #cybercrime #malware\n\n### 🎣 Phishing & Social Engineering\n\n- **Unpaid Parking Phishing Texts:** US cities are warning citizens about a widespread mobile phishing campaign impersonating parking violation departments. These texts threaten additional fines for unpaid invoices and aim to steal personal and financial information. [(🔗¹)](https://www.bleepingcomputer.com/news/security/us-cities-warn-of-wave-of-unpaid-parking-phishing-texts/) #phishing\n\n- **YouTube Extortion via Copyright Strikes:** Cybercriminals are exploiting YouTube's copyright claim system to extort YouTubers into promoting malware and cryptocurrency miners on their channels. [(🔗¹)](https://www.bleepingcomputer.com/news/security/youtubers-extorted-via-copyright-strikes-to-spread-malware/) #phishing #apt\n\n\n### 💥 Ransomware\n\n- **Medusa Ransomware Attacks:** Medusa ransomware has hit nearly 400 victims, demanding ransoms from $100K to $15M. [(🔗¹)](https://thehackernews.com/2025/03/medusa-ransomware-hits-40-victims-in.html) [(🔗²)](https://www.darkreading.com/cyberattacks-data-breaches/spearwing-raas-cyber-threat-scene) #apt #ransomware #databreach\n\n- **Ragnar Loader Used by Multiple Groups:** FIN7, FIN8, and other threat actors are using Ragnar Loader for persistent access and ransomware operations. [(🔗¹)](https://thehackernews.com/2025/03/fin7-fin8-and-others-use-ragnar-loader.html) #ransomware #apt\n\n- **EncryptHub Deploys Ransomware:** EncryptHub is deploying ransomware and stealers via trojanized apps and phishing campaigns. [(🔗¹)](https://thehackernews.com/2025/03/encrypthub-deploys-ransomware-and.html) [(🔗²)](https://www.darkreading.com/threat-intelligence/encrypthub-opsec-failures-ttps-big-plans) #malware #ransomware\n\n- **Ransomware Attacks on Saudi Construction Firms:** Ransomware attacks are increasing against Saudi construction firms. [(🔗¹)](https://www.darkreading.com/cyberattacks-data-breaches/ransomware-attacks-saudi-construction-firms) #ransomware #apt #databreach\n\n---\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        120,
+        -340
+      ],
+      "id": "10f769ca-e527-4ae8-a9c1-5c550cd569f1",
+      "name": "Summary Agent",
+      "notesInFlow": false,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput",
+      "notes": "This AI Agent will process an array of cybersecurity news articles and generate a concise, grouped threat intelligence briefing in Markdown format, suitable for the weekly_briefing table."
+    },
+    {
+      "parameters": {
+        "tableId": "bulletins",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "language",
+              "fieldValue": "={{ $('Variables').item.json.language }}"
+            },
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldId": "content",
+              "fieldValue": "={{ $json.content }}"
+            },
+            {
+              "fieldId": "sources",
+              "fieldValue": "={{ $json.sources }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        580,
+        -600
+      ],
+      "id": "3d74eb1c-7b15-491b-9c48-00de2a2b25e8",
+      "name": "Add Bulletin to Supabase",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "content",
+        "binaryPropertyName": "bulletin",
+        "options": {
+          "fileName": "=bulletin_{{ $now.format('yyyy-MM-dd') }}"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        -840
+      ],
+      "id": "de8ee380-b101-474d-9236-d58184ca7342",
+      "name": "Convert Bulleting Summary to Binary"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=",
+        "options": {
+          "username": "Bulletin"
+        },
+        "embeds": {
+          "values": [
+            {
+              "description": "=- Threat intelligence bulletin successfully created.\n`AI-Generated Bulletin • View attachment for full report`",
+              "author": "✅ Bulletin delivered",
+              "color": "#2ECC71",
+              "timestamp": "={{ $('Add Bulletin to Supabase').item.json.created_at }}",
+              "title": "={{ $('Add Bulletin to Supabase').item.json.title }}"
+            }
+          ]
+        },
+        "files": {
+          "values": [
+            {
+              "inputFieldName": "bulletin"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -360
+      ],
+      "id": "d0af84ab-d876-4924-be84-86dd6ea1f05d",
+      "name": "Send Bulletin to Discord",
+      "webhookId": "acd05671-1148-4b8c-aa1c-e5c941717d47",
+      "executeOnce": true,
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "RKPhF2Em8TviVZJu",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "bulletins",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Add Bulletin to Supabase').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "sent_to_discord",
+              "fieldValue": "true"
+            },
+            {
+              "fieldId": "sent_to_discord_date",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -120
+      ],
+      "id": "3497aed1-3577-481e-8baf-fcfb0ecd74fb",
+      "name": "Update Bulletin Sent Status",
+      "credentials": {
+        "supabaseApi": {
+          "id": "UuLxqBl3oF42ZqPC",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -880,
+        -840
+      ],
+      "id": "c5ed8c6c-b39e-4308-86db-8bf149771bf8",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1,
+      "position": [
+        260,
+        -100
+      ],
+      "id": "c95b7188-4b20-4557-bd83-2203d4c5877c",
+      "name": "Think"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        120,
+        -100
+      ],
+      "id": "5f6f5764-5df4-4ed4-a88a-ecdf4de85fb8",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=",
+        "options": {
+          "username": "Bulletin"
+        },
+        "embeds": {
+          "values": [
+            {
+              "description": "=- Error processing the bulletin!\n`Check workflow logs • Manual review required`",
+              "author": "⚠️ Bulletin generation failed",
+              "color": "#E74C3C",
+              "timestamp": "={{ $now.toISO() }}",
+              "title": "="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        580,
+        -360
+      ],
+      "id": "1e13bb58-c284-40e1-8f4a-c125a580230b",
+      "name": "Inform Bulletin Error",
+      "webhookId": "acd05671-1148-4b8c-aa1c-e5c941717d47",
+      "executeOnce": true,
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "RKPhF2Em8TviVZJu",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=",
+        "options": {
+          "username": "Bulletin"
+        },
+        "embeds": {
+          "values": [
+            {
+              "description": "=- Scanning cybersecurity RSS feeds for yesterday's threat news...",
+              "author": "🔄 Bulletin generation started",
+              "color": "#3498DB",
+              "timestamp": "={{ $now.toISO() }}",
+              "title": "="
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -880,
+        -600
+      ],
+      "id": "db197d60-813c-4d24-937b-3d4489bdaf82",
+      "name": "Inform Bulletin Init",
+      "webhookId": "acd05671-1148-4b8c-aa1c-e5c941717d47",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "36a8f87f-47af-407c-87b6-72e7238b6477",
+              "name": "title",
+              "value": "=Threat Intel Bulletin [{{ $today.format('MMMM dd, yyyy') }}]",
+              "type": "string"
+            },
+            {
+              "id": "3b49b869-685a-440a-9885-73948f8cc15e",
+              "name": "content",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "f4a71f75-4703-4407-ba26-e73ecd83e767",
+              "name": "sources",
+              "value": "={{ '{' + $jmespath($('News Aggregation').first().json.news, '[].link').join(',') + '}' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        580,
+        -840
+      ],
+      "id": "b2e99153-a9f4-457f-bf25-d2439e2e6f40",
+      "name": "Bulletin Final Structure"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Filter Yesterday News": {
+      "main": [
+        [
+          {
+            "node": "Has any empty field?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed Keys": {
+      "main": [
+        [
+          {
+            "node": "News Aggregation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Variables": {
+      "main": [
+        [
+          {
+            "node": "Dark Reading RSS Feed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Bleeping Computer RSS Feed",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Threat Post RSS Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bleeping Computer RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threat Post RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Dark Reading RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Merge RSS Feeds",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "News Aggregation": {
+      "main": [
+        [
+          {
+            "node": "Summary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge RSS Feeds": {
+      "main": [
+        [
+          {
+            "node": "Filter Yesterday News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has any empty field?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "RSS Feed Keys",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summary Agent": {
+      "main": [
+        [
+          {
+            "node": "Bulletin Final Structure",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Inform Bulletin Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Bulletin to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Convert Bulleting Summary to Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Inform Bulletin Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Bulleting Summary to Binary": {
+      "main": [
+        [
+          {
+            "node": "Send Bulletin to Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Bulletin to Discord": {
+      "main": [
+        [
+          {
+            "node": "Update Bulletin Sent Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Inform Bulletin Init",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Summary Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inform Bulletin Error": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inform Bulletin Init": {
+      "main": [
+        [
+          {
+            "node": "Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bulletin Final Structure": {
+      "main": [
+        [
+          {
+            "node": "Add Bulletin to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8e418c53-e4eb-44cb-8361-e29a958e173e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "98e897a176d6aa8f9ebfef8f0306eab4fec5c697c6120f66479530a2b348cfea"
+  },
+  "id": "uJ4pgDy5WJDWKYc0",
+  "tags": [
+    {
+      "createdAt": "2025-07-04T11:56:10.119Z",
+      "updatedAt": "2025-07-04T11:56:10.119Z",
+      "id": "Pi4eFscJRraPku7g",
+      "name": "rss"
+    },
+    {
+      "createdAt": "2025-07-04T11:56:10.086Z",
+      "updatedAt": "2025-07-05T11:55:55.416Z",
+      "id": "HE0qMQIdGn2zMF3P",
+      "name": "summarization"
+    },
+    {
+      "createdAt": "2025-07-04T11:59:11.530Z",
+      "updatedAt": "2025-07-05T11:56:08.131Z",
+      "id": "sf77bkkk6H1uarHu",
+      "name": "newspaper"
+    }
+  ]
+}
